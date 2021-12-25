@@ -1,26 +1,70 @@
-import React, { ReactPropTypes, useState } from "react";
+import { type } from "os";
+import React, { useState } from "react";
+
+type ListItem = {
+
+  text: string;
+  status: string;
+  deadline: unknown;
+
+}
+
+type RowData = {
+
+  [key: string]: ListItem;
+}
+
+const listData: RowData = {
+
+  "001":{"text":"hello there","status":"todo","deadline":"?"},
+  "002":{"text":"general kenobi","status":"todo","deadline":"?"}
+};
 
 export default function Todos(props: unknown) {
 
-  const [newTodo, setInputValue] = useState("")
+  const [newTodo, setInputValue] = useState("");
 
-  const [todos, setListItems] = useState(["hello there", "general kenobi"])
+  const [todos, setListItems] = useState(["001", "002"]);
 
+  const [edit, setEdit] = useState("");
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [newStatus, setStatus] = useState("");
+
+  const [newDeadline, setDeadline] = useState("");
+
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!newTodo) return;
+    if (!newTodo)
+      return;
 
-    setListItems([newTodo, ...todos])
-    setInputValue("")      
-  };
+    let newItemId = Date.now().toString();
 
-  const removeTodo = (removeIndex: number) => {
+    listData[newItemId] = {"text":newTodo,"status":"todo","deadline":"000"}
+
+    setListItems([newItemId, ...todos]);
+    setInputValue("");
+  }
+
+  function removeTodo(removeIndex: number) {
     const newtodos: Array<string> = todos.filter((_, index) => index !== removeIndex);
-    setListItems( newtodos )  
-  };
+    setListItems(newtodos);
+  }
 
-  //render() {
+  function showEdit(){
+
+
+  }
+
+  function saveEdit(){
+
+
+  }
+
+  function cancelEdit(){
+
+
+  }
+
     return (
       <div
         style={{
@@ -71,7 +115,8 @@ export default function Todos(props: unknown) {
                 display: "flex",
               }}
             >
-              <span style={{ flex: 1 }}>{todo}</span>
+              <span style={{ flex: 1 }}>{listData[todo].text}</span>
+              <span style={{ flex: 2 }}>{listData[todo].status} [{listData[todo].deadline}]</span>
               <span
                 style={{ cursor: "pointer" }}
                 onClick={() => removeTodo(i)}
@@ -83,5 +128,5 @@ export default function Todos(props: unknown) {
         </div>
       </div>
     );
-  //}
+
 }
