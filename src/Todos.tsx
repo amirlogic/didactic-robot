@@ -1,11 +1,11 @@
 import { type } from "os";
-import React, { useState } from "react";
+import React, { ReactPropTypes, useState } from "react";
 
 type ListItem = {
 
   text: string;
   status: string;
-  deadline: unknown;
+  deadline: string;
 
 }
 
@@ -14,11 +14,72 @@ type RowData = {
   [key: string]: ListItem;
 }
 
+interface RowProps extends ListItem {
+
+  index: number;
+  id: string;
+  edit: boolean;
+}
+
 const listData: RowData = {
 
-  "001":{"text":"hello there","status":"todo","deadline":"?"},
-  "002":{"text":"general kenobi","status":"todo","deadline":"?"}
+  "001":{"text":"hello there","status":"todo","deadline":""},
+  "002":{"text":"general kenobi","status":"todo","deadline":""}
 };
+
+function Row(props: RowProps) {
+
+    //const dline = (props.deadline === "000") ? "no deadline" : "deadline!" ;
+
+    const [edit, setEdit] = useState("");
+
+    const [status, setStatus] = useState(props.status);
+
+    const [deadline, setDeadline] = useState(props.deadline);
+
+    const saveStatus = ()=>{
+
+      setEdit("");
+      listData[props.id].status = status;
+      listData[props.id].deadline = deadline;
+    }
+
+    const deadlineDate = (rawdate: string)=>{
+
+      let [ddate,dtime] = rawdate.split('T');
+
+      let [dyear,dmonth,dday] = ddate.split('-');
+
+      //let ddl = new Date(rawdate,'YYYY-MM-DDTHH:mm').toString();
+
+      return [dday,dmonth,dyear].join('-') + ' ' + dtime;
+    }
+    
+    return (
+
+      <React.Fragment>
+        
+          <span title="click to edit" onClick={(e)=>{setEdit("text");}} style={{ flex: 1 }}>{props.text}</span>
+          {(edit === "status") ? 
+
+          <span style={{ flex: 2 }}><select onChange={(e)=>{setStatus(e.target.value)}}  value={status}>
+            <option value="todo">todo</option>
+            <option value="doing">doing</option>
+            <option value="done">done</option>
+          </select>
+          {' deadline: '}
+          <input type="datetime-local" onChange={(e)=>{setDeadline(e.target.value)}} value={deadline}></input>
+          {' '}<a style={{ cursor:"pointer" }} onClick={saveStatus}>save</a>
+          </span>
+        
+          :
+          <span title="click to edit" onClick={(e)=>{setEdit("status");}} style={{ flex: 2, cursor:"pointer" }}>{status} [{(!deadline) ? "no deadline" : deadlineDate(deadline)}] </span>
+          }
+
+      </React.Fragment>
+    )
+  
+}
 
 export default function Todos(props: unknown) {
 
@@ -39,7 +100,7 @@ export default function Todos(props: unknown) {
 
     let newItemId = Date.now().toString();
 
-    listData[newItemId] = {"text":newTodo,"status":"todo","deadline":"000"}
+    listData[newItemId] = {"text":newTodo,"status":"todo","deadline":""}
 
     setListItems([newItemId, ...todos]);
     setInputValue("");
@@ -70,7 +131,7 @@ export default function Todos(props: unknown) {
         style={{
           display: "flex",
           flexDirection: "column",
-          width: 500,
+          width: 700,
           margin: "0 auto",
           padding: 8,
         }}
@@ -86,7 +147,7 @@ export default function Todos(props: unknown) {
             id="newTodo"
             value={newTodo}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Fix the thing.."
+            placeholder="Write the new task here.."
             style={{
               display: "inline-flex",
               flex: 1,
@@ -115,8 +176,7 @@ export default function Todos(props: unknown) {
                 display: "flex",
               }}
             >
-              <span style={{ flex: 1 }}>{listData[todo].text}</span>
-              <span style={{ flex: 2 }}>{listData[todo].status} [{listData[todo].deadline}]</span>
+              <Row id={todo} index={i} edit={false} text={listData[todo].text} status={listData[todo].status} deadline={listData[todo].deadline} />
               <span
                 style={{ cursor: "pointer" }}
                 onClick={() => removeTodo(i)}
