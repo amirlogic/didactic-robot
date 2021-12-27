@@ -50,8 +50,6 @@ function Row(props: RowProps) {
 
       let [dyear,dmonth,dday] = ddate.split('-');
 
-      //let ddl = new Date(rawdate,'YYYY-MM-DDTHH:mm').toString();
-
       return [dday,dmonth,dyear].join('-') + ' ' + dtime;
     }
     
@@ -59,21 +57,22 @@ function Row(props: RowProps) {
 
       <React.Fragment>
         
-          <span title="click to edit" onClick={(e)=>{setEdit("text");}} style={{ flex: 1 }}>{props.text}</span>
+          <span style={{ flex: 1 }}>{props.text}</span>
           {(edit === "status") ? 
-
-          <span style={{ flex: 2 }}><select onChange={(e)=>{setStatus(e.target.value)}}  value={status}>
+          
+          <span style={{ flex: 2 }}><form onSubmit={saveStatus}>
+          <select onChange={(e)=>{setStatus(e.target.value)}}  value={status}>
             <option value="todo">todo</option>
             <option value="doing">doing</option>
             <option value="done">done</option>
           </select>
           {' deadline: '}
           <input type="datetime-local" onChange={(e)=>{setDeadline(e.target.value)}} value={deadline}></input>
-          {' '}<a style={{ cursor:"pointer" }} onClick={saveStatus}>save</a>
+          {' '}<button type="submit">save</button></form>
           </span>
-        
           :
-          <span title="click to edit" onClick={(e)=>{setEdit("status");}} style={{ flex: 2, cursor:"pointer" }}>{status} [{(!deadline) ? "no deadline" : deadlineDate(deadline)}] </span>
+          <><span title="click to edit" onClick={(e) => { setEdit("status"); } } style={{ flex: 2, cursor: "pointer" }}>{status}  {(!deadline) ? " " : " - deadline: " + deadlineDate(deadline)}</span></>
+          
           }
 
       </React.Fragment>
@@ -147,7 +146,7 @@ export default function Todos(props: unknown) {
             id="newTodo"
             value={newTodo}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Write the new task here.."
+            placeholder="Write a new task here.."
             style={{
               display: "inline-flex",
               flex: 1,
