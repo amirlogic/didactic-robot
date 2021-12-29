@@ -86,11 +86,6 @@ export default function Todos(props: unknown) {
 
   const [todos, setListItems] = useState(["001", "002"]);
 
-  const [edit, setEdit] = useState("");
-
-  const [newStatus, setStatus] = useState("");
-
-  const [newDeadline, setDeadline] = useState("");
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -110,20 +105,6 @@ export default function Todos(props: unknown) {
     setListItems(newtodos);
   }
 
-  function showEdit(){
-
-
-  }
-
-  function saveEdit(){
-
-
-  }
-
-  function cancelEdit(){
-
-
-  }
 
     return (
       <div
