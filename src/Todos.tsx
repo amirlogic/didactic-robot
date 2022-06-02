@@ -1,5 +1,5 @@
-import { type } from "os";
-import React, { ReactPropTypes, useState } from "react";
+
+import React, { useState } from "react";
 
 type ListItem = {
 
